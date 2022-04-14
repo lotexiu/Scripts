@@ -43,7 +43,7 @@ while True:
                 count_on += 1
             if 'note_off' in msg:
                 count_off += 1
-        if count_on != count_on:
+        if count_on != count_off:
             print('This song is currupted\n')
             os.system(f'del "{songs[choice]}"')
             time.sleep(1)
