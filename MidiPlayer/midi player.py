@@ -83,7 +83,7 @@ while True:
                 for fix in valor:
                     if fix in str((1, 2, 3, 4, 5, 6, 7, 8, 9, 0)):
                         y += fix
-                x = int(y) - 24
+                x = int(y) - note
                 exec(f'note{x} = 0')
 
         for msg in mid.play():
@@ -94,7 +94,10 @@ while True:
                 for fix in valor:
                     if fix in str((1, 2, 3, 4, 5, 6, 7, 8, 9, 0)):
                         y += fix
-                x = int(y) - 24
+
+                x = int(y) - note
+                if x > max:
+                    x -= (higher - max)
 
                 if eval(f'note{x}') == 0: #press
                     keyboard.press(keys[x])
