@@ -117,19 +117,15 @@ while True:
         for msg in mid.play():
             msg = str(msg)
             if 'note_on' in msg:
-                valor = msg[23:26]
-                y = ''
-                for fix in valor:
-                    if fix in str((1, 2, 3, 4, 5, 6, 7, 8, 9, 0)):
-                        y += fix
-
-                x = int(y) - note
+                x = int(msg[23:26]) - note
                 if x > max:
                     x -= (higher - max)
-
-                keyboard.release(keys[x])
                 keyboard.press(keys[x])
-
+            if 'note_off' in msg:
+                x = int(msg[24:27]) - note
+                if x > max:
+                    x -= (higher - max)
+                keyboard.release(keys[x])
             if keyboard.is_pressed('del'):
                 keyboard.release('del')
                 for soltar in keys:
