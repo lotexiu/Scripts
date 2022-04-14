@@ -35,41 +35,29 @@ while True:
         else:
             choice = int(choice)
         mid = mido.MidiFile(f'{songs[choice]}')
-        count_on = 0
-        count_off = 0
         for msg in mid:
             msg = str(msg)
             if 'note_on' in msg:
-                count_on += 1
-            if 'note_off' in msg:
-                count_off += 1
-        if count_on != count_off:
-            print('This song is currupted\n')
-            os.system(f'del "{songs[choice]}"')
-            time.sleep(1)
-        else:
-            for msg in mid:
-                msg = str(msg)
-                if 'note_on' in msg:
-                    valor = msg[23:26]
-                    y = ''
-                    for fix in valor:
-                        if fix in str((1, 2, 3, 4, 5, 6, 7, 8, 9, 0)):
-                            y += fix
-                    x = int(y) - 24
-                    if x < low:
-                        low = x
-                    if x > higher:
-                        higher = x
+                valor = msg[23:26]
+                y = ''
+                for fix in valor:
+                    if fix in str((1, 2, 3, 4, 5, 6, 7, 8, 9, 0)):
+                        y += fix
+                x = int(y) - 24
+                if x < low:
+                    low = x
+                if x > higher:
+                    higher = x
 
-            max = len(keys) - 1
-            note = 24 + low
-            higher -= low
-            if higher > max:
-                print("\nis bigger than the piano!")
-                print('you can try playing it but it might not work right.')
-                time.sleep(1)
-            break
+        max = len(keys) - 1
+        note = 24 + low
+        higher -= low
+        if higher > max:
+            print("\nis bigger than the piano!")
+            print('you can try playing it but it might not work right.')
+            time.sleep(1)
+        break
+
     print(f'\nselected: {songs[choice]}\n')
     print('Song is ready! press "scrlk" to start!')
     print('Press Delete to Stop!')
@@ -79,18 +67,23 @@ while True:
             break
         time.sleep(0.1)
 
+
     for msg in mid.play():
         msg = str(msg)
         if 'note_on' in msg:
-            x = int(msg[23:26]) - note
+            valor = msg[23:26]
+            y = ''
+            for fix in valor:
+                if fix in str((1, 2, 3, 4, 5, 6, 7, 8, 9, 0)):
+                    y += fix
+
+            x = int(y) - note
             if x > max:
                 x -= (higher - max)
-            keyboard.press(keys[x])
-        if 'note_off' in msg:
-            x = int(msg[24:27]) - note
-            if x > max:
-                x -= (higher - max)
+
             keyboard.release(keys[x])
+            keyboard.press(keys[x])
+
         if keyboard.is_pressed('del'):
             keyboard.release('del')
             for soltar in keys:
