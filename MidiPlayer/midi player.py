@@ -3,7 +3,6 @@ import keyboard
 import mido
 import os
 
-
 keys = ['1', 'shift + 1', '2', 'shift + 2', '3', '4', 'shift + 4', '5', 'shift + 5', '6', 'shift + 6',
         '7', '8', 'shift + 8', '9', 'shift + 9', '0', 'q', 'shift + q', 'w', 'shift + w', 'e', 'shift + e',
         'r', 't', 'shift + t', 'y', 'shift + y', 'u', 'i', 'shift + i', 'o', 'shift + o', 'p', 'shift + p',
@@ -11,9 +10,9 @@ keys = ['1', 'shift + 1', '2', 'shift + 2', '3', '4', 'shift + 4', '5', 'shift +
         'k', 'l', 'shift + l', 'z', 'shift + z', 'x', 'c', 'shift + c', 'v', 'shift + v', 'b', 'shift + b',
         'n', 'm']
 
+
 while True:
     while True:
-        used_notes = []
         songs = []
         list = os.listdir('.')
         for mids in list:
@@ -51,27 +50,8 @@ while True:
         note = 24 + low
         higher -= low
         if higher > max:
-
-            normal = []
-            num_up = []
-            num_down = []
-            for loop in range(higher + 1):
-                if loop // 1.12 not in normal:
-                    normal += [int(loop // 1.12)]
-                else:
-                    if (loop // 1.12) + 1 not in normal:
-                        normal += [int(loop // 1.12)]
-                        num_up += [int(loop // 1.12)]
-                    elif (loop // 1.12) + 1 not in normal:
-                        normal += [int(loop // 1.12)]
-                        num_down += [int(loop // 1.12)]
-                    else:
-                        pass
-
-
             print("\nis bigger than the piano!")
             print('you can try playing it but it might not work right.')
-
             time.sleep(1)
         break
 
@@ -95,8 +75,16 @@ while True:
             count_off += 1
 
     if count_on != count_off: # if have only ON
-        for x in range(120):
-            exec(f'note{x} = 0')
+        for msg in mid:
+            msg = str(msg)
+            if 'note_on' in msg:
+                valor = msg[23:26]
+                y = ''
+                for fix in valor:
+                    if fix in str((1, 2, 3, 4, 5, 6, 7, 8, 9, 0)):
+                        y += fix
+                x = int(y) - note
+                exec(f'note{x} = 0')
 
         for msg in mid.play():
             msg = str(msg)
@@ -107,12 +95,9 @@ while True:
                     if fix in str((1, 2, 3, 4, 5, 6, 7, 8, 9, 0)):
                         y += fix
 
-                if int(y) in num_up:
-                    x = int((int(y) - note) // (1 + 0.015 * (higher - max)) + 1)
-                elif int(y) in num_down:
-                    x = int((int(y) - note) // (1 + 0.015 * (higher - max)) - 1)
-                else:
-                    x = int((int(y) - note) // (1 + 0.015 * (higher - max)))
+                x = int(y) - note
+                if x > max:
+                    x -= (higher - max)
 
                 if eval(f'note{x}') == 0: #press
                     keyboard.press(keys[x])
@@ -132,30 +117,14 @@ while True:
         for msg in mid.play():
             msg = str(msg)
             if 'note_on' in msg:
-                valor = msg[23:26]
-                y = ''
-                for fix in valor:
-                    if fix in str((1, 2, 3, 4, 5, 6, 7, 8, 9, 0)):
-                        y += fix
-                if int(y) in num_up:
-                    x = int((int(y) - note) // (1 + 0.015 * (higher - max)) + 1)
-                elif int(y) in num_down:
-                    x = int((int(y) - note) // (1 + 0.015 * (higher - max)) - 1)
-                else:
-                    x = int((int(y) - note) // (1 + 0.015 * (higher - max)))
+                x = int(msg[23:26]) - note
+                if x > max:
+                    x -= (higher - max)
                 keyboard.press(keys[x])
             if 'note_off' in msg:
-                valor = msg[23:26]
-                y = ''
-                for fix in valor:
-                    if fix in str((1, 2, 3, 4, 5, 6, 7, 8, 9, 0)):
-                        y += fix
-                if int(y) in num_up:
-                    x = int((int(y) - note) // (1 + 0.015 * (higher - max)) + 1)
-                elif int(y) in num_down:
-                    x = int((int(y) - note) // (1 + 0.015 * (higher - max)) - 1)
-                else:
-                    x = int((int(y) - note) // (1 + 0.015 * (higher - max)))
+                x = int(msg[24:27]) - note
+                if x > max:
+                    x -= (higher - max)
                 keyboard.release(keys[x])
             if keyboard.is_pressed('del'):
                 keyboard.release('del')
