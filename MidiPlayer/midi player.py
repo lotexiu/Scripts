@@ -49,11 +49,11 @@ while True:
         max = len(keys) - 1
         note = 24 + low
         higher -= low
+        normal = []
+        num_up = []
+        num_down = []
         if higher > max:
 
-            normal = []
-            num_up = []
-            num_down = []
             for loop in range(higher + 1):
                 if loop // 1.12 not in normal:
                     normal += [loop // 1.12]
@@ -104,7 +104,7 @@ while True:
                     if fix in str((1, 2, 3, 4, 5, 6, 7, 8, 9, 0)):
                         y += fix
 
-                if int(y) > max:
+                if higher > max:
                     if int(y) in num_up:
                         x = int((int(y) - note) // (1 + 0.015 * (higher - max)) + 1)
                     if int(y) in num_down:
@@ -137,7 +137,7 @@ while True:
                     if fix in str((1, 2, 3, 4, 5, 6, 7, 8, 9, 0)):
                         y += fix
 
-                if int(y) > max:
+                if higher > max:
                     if int(y) in num_up:
                         x = int((int(y) - note) // (1 + 0.015 * (higher - max)) + 1)
                     if int(y) in num_down:
@@ -155,7 +155,7 @@ while True:
                     if fix in str((1, 2, 3, 4, 5, 6, 7, 8, 9, 0)):
                         y += fix
 
-                if int(y) > max:
+                if higher > max:
                     if int(y) in num_up:
                         x = int((int(y) - note) // (1 + 0.015 * (higher - max)) + 1)
                     if int(y) in num_down:
