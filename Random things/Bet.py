@@ -9,7 +9,7 @@ if os.path.isfile('system.py'):
     start = system.start
 
 
-nota = open("C:/Users/aleph/Desktop/nota.txt", "a")
+nota = open("C:/Users/????/Desktop/nota.txt", "a")
 
 for linejump in range(start):
     nota.write("\r")
@@ -35,7 +35,7 @@ system1 = open('system.py', 'w')
 system1.write('start = %s' % start)
 system1.close()
 
-os.system("C:/Users/aleph/Desktop/nota.txt")
+os.system("C:/Users/?????/Desktop/nota.txt")
 for closing in range(10):
     print('Fechando arquivo em:', 10 - closing)
     time.sleep(1)
