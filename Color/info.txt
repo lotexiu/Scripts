@@ -1,0 +1,2 @@
+Com base na posição do mouse localizado na tela, após pertar a tecla "p" , ele mostrara o valor da posição
+do mouse que se encontrava e a cor do pixel em que ele estava em cima.
