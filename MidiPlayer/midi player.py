@@ -3,6 +3,7 @@ import keyboard
 import mido
 import os
 
+
 keys = ['1', 'shift + 1', '2', 'shift + 2', '3', '4', 'shift + 4', '5', 'shift + 5', '6', 'shift + 6',
         '7', '8', 'shift + 8', '9', 'shift + 9', '0', 'q', 'shift + q', 'w', 'shift + w', 'e', 'shift + e',
         'r', 't', 'shift + t', 'y', 'shift + y', 'u', 'i', 'shift + i', 'o', 'shift + o', 'p', 'shift + p',
@@ -10,9 +11,9 @@ keys = ['1', 'shift + 1', '2', 'shift + 2', '3', '4', 'shift + 4', '5', 'shift +
         'k', 'l', 'shift + l', 'z', 'shift + z', 'x', 'c', 'shift + c', 'v', 'shift + v', 'b', 'shift + b',
         'n', 'm']
 
-
 while True:
     while True:
+        used_notes = []
         songs = []
         list = os.listdir('.')
         for mids in list:
@@ -52,6 +53,7 @@ while True:
         if higher > max:
             print("\nis bigger than the piano!")
             print('you can try playing it but it might not work right.')
+
             time.sleep(1)
         break
 
@@ -75,16 +77,8 @@ while True:
             count_off += 1
 
     if count_on != count_off: # if have only ON
-        for msg in mid:
-            msg = str(msg)
-            if 'note_on' in msg:
-                valor = msg[23:26]
-                y = ''
-                for fix in valor:
-                    if fix in str((1, 2, 3, 4, 5, 6, 7, 8, 9, 0)):
-                        y += fix
-                x = int(y) - note
-                exec(f'note{x} = 0')
+        for x in range(120):
+            exec(f'note{x} = 0')
 
         for msg in mid.play():
             msg = str(msg)
@@ -95,9 +89,7 @@ while True:
                     if fix in str((1, 2, 3, 4, 5, 6, 7, 8, 9, 0)):
                         y += fix
 
-                x = int(y) - note
-                if x > max:
-                    x -= (higher - max)
+                x = int((int(y) - note) // (1 + 0.015 * (higher - max)))
 
                 if eval(f'note{x}') == 0: #press
                     keyboard.press(keys[x])
@@ -117,14 +109,21 @@ while True:
         for msg in mid.play():
             msg = str(msg)
             if 'note_on' in msg:
-                x = int(msg[23:26]) - note
-                if x > max:
-                    x -= (higher - max)
+                valor = msg[23:26]
+                y = ''
+                for fix in valor:
+                    if fix in str((1, 2, 3, 4, 5, 6, 7, 8, 9, 0)):
+                        y += fix
+                x = int((int(y) - note) // (1 + 0.015 * (higher - max)))
                 keyboard.press(keys[x])
             if 'note_off' in msg:
-                x = int(msg[24:27]) - note
-                if x > max:
-                    x -= (higher - max)
+                valor = msg[23:26]
+                y = ''
+                for fix in valor:
+                    if fix in str((1, 2, 3, 4, 5, 6, 7, 8, 9, 0)):
+                        y += fix
+                x = int((int(y) - note) // (1 + 0.015 * (higher - max)))
+
                 keyboard.release(keys[x])
             if keyboard.is_pressed('del'):
                 keyboard.release('del')
