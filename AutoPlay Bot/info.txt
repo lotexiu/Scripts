@@ -1,0 +1,41 @@
+Menu Auto Play - é o menu de execução, qual cita as teclas e suas funções
+
+	Shift inicia o AutoPlay.py -- assim que for apertado a tecla, irá ser emitido um audio de uma certa 
+	frequencia para representar que foi aberto
+
+	Ctrl fecha o AutoPlay.py -- assim que for apertado a tecla, ele fechara o autoplay e quando ele estiver quase
+	encerrando o programa, sera emitido um audio de certa frequencia para representar que foi fechado 
+	
+	Scrlk fecha o Menu AutoPlay -- quando for apertado, emitira um som antes do seu encarramento por completo de seu
+	funcionamento
+	
+	Ctrl + F entra/sai do modo safe -- o modo safe é uma area que os três comandos acima não são detectados ou aplicados
+	quando se estiver dentro da area safe. Assim que apertar novamente, os comandos acima voltaram a funcionar.
+	Será emitido um som quando você entrar ou sair do modo safe.
+
+AutoPlay - é o sistema que faz a leitura da tela e com base nas informações recebidas, ele executa os comandos correspondentes
+	
+	é uitlizado "from PIL import Image, ImageGrab" para fazer a captura da tela. a variavel que representante é
+	px = ImageGrab.grab().load()
+
+	Após fazer uma captura de tela, 8 variaveis com localizações de coordenadas diferentes, recebem e contém a cor do
+	pixel com base na captura.
+
+	O sistema de cor contida é em RGB (0, 0, 0) Red, Green, Blue. Cada vez maior o valores, mais proximo ao branco
+	cada vez menor, mais proximo ao preto
+	
+	Depois com os valores de cor de cada pixel, ele confere se algumas das informações contidas, combinam com o valor
+	da cor das notas dadas ao usuario.
+	ex:  nota 1 = azul, cor do pixel capturado = cinza;  nota 1 = cor do pixel (se for iqual)
+	, se sim, pressione a tecla correspondente a nota
+
+	assim que for feito as suas verificações se alguma cor das notas combinam com as cor dos pixels e ter pressionado a tecla
+	correspondente, ele ira refazer a verificação, mas fazendo o oposto.
+	ex nota 1 != cor do pixel (se for diferente), se sim, solte a tecla correspondente a nota
+
+	Para evitar que ele fique virifique uma certa condição no momento errado, assim que for executado a condição
+	o valor da condição irá mudar de 0 ou 1, e com base no valor ele não ira executar a condição pois o valor não corresponde
+	ao valor que precisa estar
+
+	ex: se A = B e valor = 1, execute, após executar torne valor = 0
+	    se A != B e valor = 0, execute, apos executar torne valor = 1
