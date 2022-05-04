@@ -2,6 +2,11 @@ import time
 import keyboard
 from PIL import Image, ImageGrab
 import winsound
+
+print('WARNING: Your game needs to be on the main screen (primary screen) to work.')
+print('And you need to quote the color of your note in R.G.B. ex: 199,144,0')
+print('Link for you see: https://prnt.sc/o5lhLo6w7LDO\n')
+
 frequency = 100  # Set Frequency To 2500 Hertz
 duration = 80  # Set Duration To 1000 ms == 1 second
 
@@ -23,16 +28,38 @@ vc2 = (199, 144, 0) # note 2
 vc3 = (199, 144, 0) # note 3
 vc4 = (199, 144, 0) # note 4
 
+def pos_notes(num):
+    import pyautogui
+    import time
+    import keyboard
+
+    print(f'Put your mouse in the center of the note {num} and press P')
+    print('Click one time')
+
+    while True:
+        if keyboard.is_pressed('p'):
+            x, y = pyautogui.position()
+            print(f' x,y = {x, y}')
+            break
+        time.sleep(0.1)
+    time.sleep(0.8)
+    print('Defined!\n')
+    return x, y
+
+pos_note1 = pos_notes(1)
+pos_note2 = pos_notes(2)
+pos_note3 = pos_notes(3)
+pos_note4 = pos_notes(4)
 
 while not keyboard.is_pressed('ctrl'):
     start_time = time.time() # start count time
     px = ImageGrab.grab() # take screenshot
 
     # Current note color
-    color1 = px.getpixel((425, 682)) # note 1
-    color2 = px.getpixel((568, 682)) # note 2
-    color3 = px.getpixel((712, 682)) # note 3
-    color4 = px.getpixel((853, 682)) # note 4
+    color1 = px.getpixel((pos_note1)) # note 1
+    color2 = px.getpixel((pos_note2)) # note 2
+    color3 = px.getpixel((pos_note3)) # note 3
+    color4 = px.getpixel((pos_note4)) # note 4
 
     if color1 == vc1 and v1 == 0:
         keyboard.press(key1)
