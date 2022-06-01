@@ -1,321 +1,64 @@
-import time
+import shocurasy
 import keyboard
-import mido
 import os
 
-keys = ['1', 'shift + 1', '2', 'shift + 2', '3', '4', 'shift + 4', '5', 'shift + 5', '6', 'shift + 6',
-        '7', '8', 'shift + 8', '9', 'shift + 9', '0', 'q', 'shift + q', 'w', 'shift + w', 'e', 'shift + e',
-        'r', 't', 'shift + t', 'y', 'shift + y', 'u', 'i', 'shift + i', 'o', 'shift + o', 'p', 'shift + p',
-        'a', 's', 'shift + s', 'd', 'shift + d', 'f', 'g', 'shift + g', 'h', 'shift + h', 'j', 'shift + j',
-        'k', 'l', 'shift + l', 'z', 'shift + z', 'x', 'c', 'shift + c', 'v', 'shift + v', 'b', 'shift + b',
-        'n', 'm']
-
-while True:
+def paginas(Midi_list):
+    pags = 0
     while True:
-        used_notes = []
-        songs = []
-        list = os.listdir('.')
-        for mids in list:
-            if '.mid' in mids:
-                songs += [mids]
-
-        low = 200
-        higher = -100
-        print('Songs:')
-        for show in range(len(songs)):
-            print(f'({show}) {songs[show]}')
-        print('\nType "!exit" to close')
-        print("Some songs may not work properly")
-        choice = input('Chosse your song: ')
-        if choice == '!exit':
-            exit()
-        else:
-            choice = int(choice)
-        mid = mido.MidiFile(f'{songs[choice]}')
-        for msg in mid:
-            msg = str(msg)
-            if 'note_on' in msg:
-                valor = msg[23:26]
-                y = ''
-                for fix in valor:
-                    if fix in str((1, 2, 3, 4, 5, 6, 7, 8, 9, 0)):
-                        y += fix
-                x = int(y) - 24
-                if x < low:
-                    low = x
-                if x > higher:
-                    higher = x
-
-        max = len(keys) - 1
-        note = 24 + low
-        higher -= low
-        normal = []
-        num_up = []
-        num_down = []
-        if higher > max:
-
-            for loop in range(higher + 1):
-                if loop // 1.12 not in normal:
-                    normal += [loop // 1.12]
-                else:
-                    if (loop // 1.12) - 1 not in normal:
-                        if int(loop) != 1:
-                            num_down += [int(loop)]
-                    if (loop // 1.12) + 1 not in normal:
-                        num_up += [int(loop)]
-
-            print(num_up)
-            print(num_down)
-            print("\nis bigger than the piano!")
-            print('you can try playing it but it might not work right.')
-
-            time.sleep(1)
-        break
-
-    print(f'\nselected: {songs[choice]}\n')
-    print('Song is ready! press "scrlk" to start!')
-    print('Press Delete to Stop!')
-    while True:
-        if keyboard.is_pressed('scrlk'):
-            keyboard.release('scrlk')
+        pags += 1
+        if pags * 12 >= len(Midi_list):
             break
-        time.sleep(0.1)
-
-    count_on = 0
-    count_off = 0
-
-    for msg in mid:
-        msg = str(msg)
-        if 'note_on' in msg:
-            count_on += 1
-        elif 'note_off' in msg:
-            count_off += 1
-
-    if count_on != count_off:  # if have only ON
-        for x in range(120):
-            exec(f'note{x} = 0')
-
-        for msg in mid.play():
-            msg = str(msg)
-            if 'note_on' in msg:
-                valor = msg[23:26]
-                y = ''
-                for fix in valor:
-                    if fix in str((1, 2, 3, 4, 5, 6, 7, 8, 9, 0)):
-                        y += fix
-
-                if higher > max:
-                    if int(y) in num_up:
-                        x = int((int(y) - note) // (1 + 0.015 * (higher - max)) + 1)
-                    if int(y) in num_down:
-                        x = int((int(y) - note) // (1 + 0.015 * (higher - max)) + 1)
-                    else:
-                        x = int((int(y) - note) // (1 + 0.015 * (higher - max)))
-                else:
-                    x = int(y) - note
-                if eval(f'note{x}') == 0:  # press
-                    keyboard.press(keys[x])
-                    exec(f'note{x} = 1')
-
-                elif eval(f'note{x}') == 1:  # release
-                    keyboard.release(keys[x])
-                    exec(f'note{x} = 0')
-
-                if keyboard.is_pressed('del'):  # stop
-                    keyboard.release('del')
-                    for soltar in keys:
-                        keyboard.release(soltar)
-                    break
-
-    else:  # if have ON and OFF
-        for msg in mid.play():
-            msg = str(msg)
-            if 'note_on' in msg:
-                valor = msg[23:26]
-                y = ''
-                for fix in valor:
-                    if fix in str((1, 2, 3, 4, 5, 6, 7, 8, 9, 0)):
-                        y += fix
-
-                if higher > max:
-                    if int(y) in num_up:
-                        x = int((int(y) - note) // (1 + 0.015 * (higher - max)) + 1)
-                    if int(y) in num_down:
-                        x = int((int(y) - note) // (1 + 0.015 * (higher - max)) + 1)
-                    else:
-                        x = int((int(y) - note) // (1 + 0.015 * (higher - max)))
-                else:
-                    x = int(y) - note
-
-                keyboard.press(keys[x])
-            if 'note_off' in msg:
-                valor = msg[23:26]
-                y = ''
-                for fix in valor:
-                    if fix in str((1, 2, 3, 4, 5, 6, 7, 8, 9, 0)):
-                        y += fix
-
-                if higher > max:
-                    if int(y) in num_up:
-                        x = int((int(y) - note) // (1 + 0.015 * (higher - max)) + 1)
-                    if int(y) in num_down:
-                        x = int((int(y) - note) // (1 + 0.015 * (higher - max)) + 1)
-                    else:
-                        x = int((int(y) - note) // (1 + 0.015 * (higher - max)))
-                else:
-                    x = int(y) - note
-
-                keyboard.release(keys[x])
-            if keyboard.is_pressed('del'):
-                keyboard.release('del')
-                for soltar in keys:
-                    keyboard.release(soltar)
-                break
+    return pags
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-import time
-import keyboard
-import mido
-import os
-
-keys = ['1', 'shift + 1', '2', 'shift + 2', '3', '4', 'shift + 4', '5', 'shift + 5', '6', 'shift + 6',
-        '7', '8', 'shift + 8', '9', 'shift + 9', '0', 'q', 'shift + q', 'w', 'shift + w', 'e', 'shift + e',
-        'r', 't', 'shift + t', 'y', 'shift + y', 'u', 'i', 'shift + i', 'o', 'shift + o', 'p', 'shift + p',
-        'a', 's', 'shift + s', 'd', 'shift + d', 'f', 'g', 'shift + g', 'h', 'shift + h', 'j', 'shift + j',
-        'k', 'l', 'shift + l', 'z', 'shift + z', 'x', 'c', 'shift + c', 'v', 'shift + v', 'b', 'shift + b',
-        'n', 'm']
+def mostrar(pag, Midi_list):
+    print()
+    for musicas in range(12):
+        val = musicas + (12 * (int(pag[-1]) - 1))
+        print(f'({val + 1}) {Midi_list[val]}')
+        if Midi_list[val] == Midi_list[-1]:
+            break
 
 
 while True:
-    while True:
-        songs = []
-        list = os.listdir('.')
-        for mids in list:
-            if '.mid' in mids:
-                songs += [mids]
+    songs = []
+    listar = os.listdir('.')
+    for mids in listar:
+        if '.mid' in mids:
+            songs += [mids]
 
-        low = 200
-        higher = -100
-        print('Songs:')
-        for show in range(len(songs)):
-                print(f'({show}) {songs[show]}')
-        print('\nType "!exit" to close')
-        print("Some songs may not work properly")
-        choice = input('Chosse your song: ')
-        if choice == '!exit':
+    choose = '1'
+    low = 200
+    higher = -100
+    maxpags = paginas(songs)
+    mostrar('1', songs)
+    while True:
+        print(f'\n{"-"*10}| Page {choose[-1]}/{maxpags} |{"-"*10}')
+        print('Type p"number" to change page. Ex: p2')
+        print('type the number to select the song.')
+        print('Type "!exit" to close.')
+        choose = input('Choose:')
+        choose = choose.lower()
+        if 'p' in choose:
+            if int(choose[1]) > maxpags:
+                print('Does not exist this page.')
+            else:
+                mostrar(choose, songs)
+        elif choose == '!exit':
             exit()
-        else:
-            choice = int(choice)
-        mid = mido.MidiFile(f'{songs[choice]}')
-        for msg in mid:
-            msg = str(msg)
-            if 'note_on' in msg:
-                valor = msg[23:26]
-                y = ''
-                for fix in valor:
-                    if fix in str((1, 2, 3, 4, 5, 6, 7, 8, 9, 0)):
-                        y += fix
-                x = int(y) - 24
-                if x < low:
-                    low = x
-                if x > higher:
-                    higher = x
+        elif choose.isalpha() or int(choose) > len(songs):
+            print('What?..')
 
-        max = len(keys) - 1
-        note = 24 + low
-        higher -= low
-        if higher > max:
-            print("\nis bigger than the piano!")
-            print('you can try playing it but it might not work right.')
-            time.sleep(1)
-        break
-
-    print(f'\nselected: {songs[choice]}\n')
-    print('Song is ready! press "scrlk" to start!')
-    print('Press Delete to Stop!')
-    while True:
-        if keyboard.is_pressed('scrlk'):
-            keyboard.release('scrlk')
+        elif 'p' not in choose:
+            sheet, tempo = shocurasy.read_midi(f'{songs[int(choose) - 1]}')
+            print(f'\nselected: {songs[int(choose) - 1]}\n')
+            print('Song is ready! press "scrlk" to start!')
+            print('Press "Pause" to Pause/Resume')
+            print('Press Delete to Stop!')
+            tom = 0 # Default 0
+            while True:
+                if keyboard.is_pressed('scrlk'):
+                    break
+                shocurasy.tempo(200)
+            shocurasy.play_sheet(sheet, tempo, tom)
             break
-        time.sleep(0.1)
-
-    count_on = 0
-    count_off = 0
-
-    for msg in mid:
-        msg = str(msg)
-        if 'note_on' in msg:
-            count_on += 1
-        elif 'note_off' in msg:
-            count_off += 1
-
-    if count_on != count_off: # if have only ON
-        for msg in mid:
-            msg = str(msg)
-            if 'note_on' in msg:
-                valor = msg[23:26]
-                y = ''
-                for fix in valor:
-                    if fix in str((1, 2, 3, 4, 5, 6, 7, 8, 9, 0)):
-                        y += fix
-                x = int(y) - note
-                exec(f'note{x} = 0')
-
-        for msg in mid.play():
-            msg = str(msg)
-            if 'note_on' in msg:
-                valor = msg[23:26]
-                y = ''
-                for fix in valor:
-                    if fix in str((1, 2, 3, 4, 5, 6, 7, 8, 9, 0)):
-                        y += fix
-
-                x = int(y) - note
-                if x > max:
-                    x -= (higher - max)
-
-                if eval(f'note{x}') == 0: #press
-                    keyboard.press(keys[x])
-                    exec(f'note{x} = 1')
-
-                elif eval(f'note{x}') == 1: #release
-                    keyboard.release(keys[x])
-                    exec(f'note{x} = 0')
-
-                if keyboard.is_pressed('del'): #stop
-                    keyboard.release('del')
-                    for soltar in keys:
-                        keyboard.release(soltar)
-                    break
-
-    else: # if have ON and OFF
-        for msg in mid.play():
-            msg = str(msg)
-            if 'note_on' in msg:
-                x = int(msg[23:26]) - note
-                if x > max:
-                    x -= (higher - max)
-                keyboard.press(keys[x])
-            if 'note_off' in msg:
-                x = int(msg[24:27]) - note
-                if x > max:
-                    x -= (higher - max)
-                keyboard.release(keys[x])
-            if keyboard.is_pressed('del'):
-                keyboard.release('del')
-                for soltar in keys:
-                    keyboard.release(soltar)
-                    break
