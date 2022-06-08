@@ -1,8 +1,10 @@
 import Shotokatan as shocurasy
 import keyboard
 
+print('Your songs need to be in the one folder above the file (paste=music)')
+print('exemple: https://prnt.sc/Nw70wOZAH0Rh')
 while True:
-    songs = shocurasy.search_files('.mid', '../MidiPlayer')
+    songs = shocurasy.search_files('.mid', 'music')
     total_pags = shocurasy.pags(songs, 12)
     choose = '!p1'
     shocurasy.show_pages(songs, total_pags, choose, )
@@ -13,7 +15,7 @@ while True:
         choose = input('Choose:')
 
         if '!p' in choose.lower():
-            songs = shocurasy.search_files('.mid', '../MidiPlayer')
+            songs = shocurasy.search_files('.mid', 'music')
             total_pags = shocurasy.pags(songs, 12)
             shocurasy.show_pages(songs, total_pags, choose, )
         elif choose == '!exit':
@@ -32,6 +34,6 @@ while True:
             shocurasy.play_sheet(sheet, tempo, tom)
             break
         else:
-            songs = shocurasy.search_files('.mid', '../MidiPlayer')
+            songs = shocurasy.search_files('.mid', 'music')
             total_pags = shocurasy.pags(songs, 12)
             shocurasy.show_pages(songs, total_pags, '!p1', choose)
